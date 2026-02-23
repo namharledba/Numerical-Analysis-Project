@@ -1,3 +1,3 @@
-x = 5
-y = 6
-print (x+y)
+print("Hello World")
+print("Hello World")
+print("Hello World")
