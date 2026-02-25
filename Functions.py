@@ -1,7 +1,7 @@
 from sympy import symbols, sympify, solve, Eq
 import math
 
-def simple_fixed_point(equ,frist_initial, expected_error):
+def simple_fixed_point(equ,frist_initial, expected_error):     #the function isn't working, can't solve equtions correctly 
     x = symbols('x')
     fx = sympify(equ)
     x_value = float(frist_initial)
