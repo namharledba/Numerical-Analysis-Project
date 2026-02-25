@@ -20,7 +20,7 @@ def simple_fixed_point(equ,frist_initial, expected_error):     #the function isn
         i += 1
 
 
-def bi_section(xl, xu, equ, expected_error):
+def bi_section(xl, xu, equ, expected_error):                 #this functioins can't handle large and inaccurate inputs
     x = symbols('x')
     fx = sympify(equ)
     xr= 0.00
