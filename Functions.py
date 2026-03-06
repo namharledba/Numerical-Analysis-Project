@@ -17,19 +17,23 @@ def simple_fixed_point(frist_initial, equ, expected_error):
     fx = sp.sympify(equ)
     highest_power = sp.degree(fx)
     coeff_highest = fx.coeff(x ** highest_power)
+
     reset = fx - (coeff_highest * x ** highest_power)
-    gx_expr = (reset / coeff_highest) ** (1 / highest_power)
+    if coeff_highest < 0 :
+        gx_expr = (-reset / coeff_highest) ** (1 / highest_power)
+    else :
+        gx_expr = (reset / coeff_highest) ** (1 / highest_power)
     x_value = float(frist_initial)
     error = 100
     i = 0
 
     while error != expected_error :
         gx = gx_expr.subs(x, x_value)
-        if i == 1:
+        if i == 0:
             print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = ____")
         else :
             print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = {error:.3f}")
-        if error < expected_error: break
+        if error <= expected_error: break
         error = abs((gx - x_value) / gx) * 100
         x_value = gx
         i += 1
@@ -62,7 +66,7 @@ def bi_section(xl, xu, equ, expected_error):
             fxl = fx.subs(x, xl)
         else:
             break
-        if error < expected_error: break
+        if error <= expected_error: break
         i+=1
 
 
@@ -93,5 +97,5 @@ def false_position(xl, xu, equ, expected_error):
             xl = xr
         else:
             break
-        if error < expected_error: break
+        if error <= expected_error: break
         i += 1
