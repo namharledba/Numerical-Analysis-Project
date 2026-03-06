@@ -1,7 +1,7 @@
 import sympy as sp
 
 def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
-    if i == 1 :
+    if i == 0 :
         print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
           f" f(xr) = {fxr:.3f} |error = {"____"}")
     else :
@@ -21,7 +21,7 @@ def simple_fixed_point(frist_initial, equ, expected_error):
     gx_expr = (reset / coeff_highest) ** (1 / highest_power)
     x_value = float(frist_initial)
     error = 100
-    i = 1
+    i = 0
 
     while error != expected_error :
         gx = gx_expr.subs(x, x_value)
@@ -40,7 +40,7 @@ def bi_section(xl, xu, equ, expected_error):
     fx = sp.sympify(equ)
     xr= 0.00
     error = 100
-    i = 1
+    i = 0
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
 
@@ -71,7 +71,7 @@ def false_position(xl, xu, equ, expected_error):
     fx = sp.sympify(equ)
     xr = 0.00
     error = 100
-    i = 1
+    i = 0
     while error != expected_error:
         xr_old = xr
 
