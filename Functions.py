@@ -75,21 +75,21 @@ def false_position(xl, xu, equ, expected_error):
     while error != expected_error:
         xr_old = xr
 
-        fxl = float(fx.subs(x, xl))
-        fxu = float(fx.subs(x, xu))
+        fxl = fx.subs(x, xl)
+        fxu = fx.subs(x, xu)
 
         if fxu * fxl > 0:
             print("The function has no solution...")
             break
 
-        xr = float(xu - ((fxu * (xl - xu)) / (fxl - fxu)))
-        fxr = float(fx.subs(x, xr))
+        xr = xu - ((fxu * (xl - xu)) / (fxl - fxu))
+        fxr = fx.subs(x, xr)
         error = abs((xr - xr_old) / xr) * 100
 
         display(i,xl,fxl,xu,fxu,xr,fxr,error)
         if fxr * fxl < 0:
             xu = xr
-        elif fxr * fxu < 0:
+        elif fxr * fxl > 0:
             xl = xr
         else:
             break
