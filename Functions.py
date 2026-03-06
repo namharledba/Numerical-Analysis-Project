@@ -1,5 +1,4 @@
-import sympy
-from sympy import symbols, sympify, solve, Eq
+import sympy as sp
 
 def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
     if i == 1 :
@@ -14,9 +13,9 @@ def not_valid(fxu, fxl):
 
 
 def simple_fixed_point(frist_initial, equ, expected_error):
-    x = symbols('x')
-    fx = sympify(equ)
-    highest_power = sympy.degree(fx)
+    x = sp.symbols('x')
+    fx = sp.sympify(equ)
+    highest_power = sp.degree(fx)
     coeff_highest = fx.coeff(x ** highest_power)
     reset = fx - (coeff_highest * x ** highest_power)
     gx_expr = (reset / coeff_highest) ** (1 / highest_power)
@@ -37,8 +36,8 @@ def simple_fixed_point(frist_initial, equ, expected_error):
 
 
 def bi_section(xl, xu, equ, expected_error):
-    x = symbols('x')
-    fx = sympify(equ)
+    x = sp.symbols('x')
+    fx = sp.sympify(equ)
     xr= 0.00
     error = 100
     i = 1
@@ -68,8 +67,8 @@ def bi_section(xl, xu, equ, expected_error):
 
 
 def false_position(xl, xu, equ, expected_error):
-    x = symbols('x')
-    fx = sympify(equ)
+    x = sp.symbols('x')
+    fx = sp.sympify(equ)
     xr = 0.00
     error = 100
     i = 1
