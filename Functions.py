@@ -27,7 +27,7 @@ def simple_fixed_point(frist_initial, equ, expected_error):
     error = 100
     i = 0
 
-    while error != expected_error :
+    while error >= expected_error :
         gx = gx_expr.subs(x, x_value)
         if i == 0:
             print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = ____")
@@ -48,7 +48,7 @@ def bi_section(xl, xu, equ, expected_error):
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
 
-    while error != expected_error :
+    while error >= expected_error :
         if not_valid(fxu, fxl):
             print("The function has no solution...")
             break
@@ -76,7 +76,7 @@ def false_position(xl, xu, equ, expected_error):
     xr = 0.00
     error = 100
     i = 0
-    while error != expected_error:
+    while error >= expected_error:
         xr_old = xr
 
         fxl = fx.subs(x, xl)
@@ -109,7 +109,7 @@ def newton_method(initial, equ, expected_error):
     error = 100
     i = 0
 
-    while error > expected_error:
+    while error >= expected_error:
         fx_val = float(fx.subs(x, x_value))
         dfx_val = float(dfx.subs(x, x_value))
 
