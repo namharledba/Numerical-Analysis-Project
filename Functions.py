@@ -94,4 +94,5 @@ def false_position(xl, xu, equ, expected_error):
         else:
             break
         if error < expected_error: break
+
         i += 1
