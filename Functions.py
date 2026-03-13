@@ -44,6 +44,7 @@ def bi_section(xl, xu, equ, expected_error):
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
 
+
     while error != expected_error :
         if not_valid(fxu, fxl):
             print("The function has no solution...")
