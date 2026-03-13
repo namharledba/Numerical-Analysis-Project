@@ -74,7 +74,6 @@ def false_position(xl, xu, equ, expected_error):
     i = 1
     while error != expected_error:
         xr_old = xr
-
         fxl = fx.subs(x, xl)
         fxu = fx.subs(x, xu)
 
