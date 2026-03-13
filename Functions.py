@@ -1,7 +1,7 @@
 import sympy as sp
 
 def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
-    if i == 1 :
+    if i == 0 :
         print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
           f" f(xr) = {fxr:.3f} |error = {"____"}")
     else :
@@ -17,19 +17,23 @@ def simple_fixed_point(frist_initial, equ, expected_error):
     fx = sp.sympify(equ)
     highest_power = sp.degree(fx)
     coeff_highest = fx.coeff(x ** highest_power)
+
     reset = fx - (coeff_highest * x ** highest_power)
-    gx_expr = (reset / coeff_highest) ** (1 / highest_power)
+    if coeff_highest < 0 :
+        gx_expr = (-reset / coeff_highest) ** (1 / highest_power)
+    else :
+        gx_expr = (reset / coeff_highest) ** (1 / highest_power)
     x_value = float(frist_initial)
     error = 100
-    i = 1
+    i = 0
 
     while error != expected_error :
         gx = gx_expr.subs(x, x_value)
-        if i == 1:
+        if i == 0:
             print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = ____")
         else :
             print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = {error:.3f}")
-        if error < expected_error: break
+        if error <= expected_error: break
         error = abs((gx - x_value) / gx) * 100
         x_value = gx
         i += 1
@@ -40,10 +44,9 @@ def bi_section(xl, xu, equ, expected_error):
     fx = sp.sympify(equ)
     xr= 0.00
     error = 100
-    i = 1
+    i = 0
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
-
 
     while error != expected_error :
         if not_valid(fxu, fxl):
@@ -63,7 +66,7 @@ def bi_section(xl, xu, equ, expected_error):
             fxl = fx.subs(x, xl)
         else:
             break
-        if error < expected_error: break
+        if error <= expected_error: break
         i+=1
 
 
@@ -72,9 +75,10 @@ def false_position(xl, xu, equ, expected_error):
     fx = sp.sympify(equ)
     xr = 0.00
     error = 100
-    i = 1
+    i = 0
     while error != expected_error:
         xr_old = xr
+
         fxl = fx.subs(x, xl)
         fxu = fx.subs(x, xu)
 
@@ -93,9 +97,39 @@ def false_position(xl, xu, equ, expected_error):
             xl = xr
         else:
             break
-        if error < expected_error: break
-
+        if error <= expected_error: break
         i += 1
+
+def newton_method(initial, equ, expected_error):
+    x = sp.symbols('x')
+    fx = sp.sympify(equ)
+    dfx = sp.diff(fx, x)
+
+    x_value = float(initial)
+    error = 100
+    i = 0
+
+    while error != expected_error:
+        fx_val = float(fx.subs(x, x_value))
+        dfx_val = float(dfx.subs(x, x_value))
+
+        xr = x_value - (fx_val / dfx_val)
+
+
+        if i == 0:
+            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = ____")
+        else:
+            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = {error:.6f}%")
+
+        error = abs((xr - x_value) / xr) * 100
+
+        if error <= expected_error:
+            break
+
+        x_value = xr
+        i += 1
+
+    print(f"\nRoot = {xr:.6f}")
 
 def se_cant(xi, xi_1, equ, expected_error):
 
@@ -104,7 +138,7 @@ def se_cant(xi, xi_1, equ, expected_error):
 
     error = 100
     i = 0
-    while error > expected_error:
+    while error != expected_error:
 
         xi_old = xi
 
@@ -133,7 +167,7 @@ def newton_method(initial, equ, expected_error):
     error = 100
     i = 0
 
-    while error >= expected_error:
+    while error != expected_error:
         fx_val = float(fx.subs(x, x_value))
         dfx_val = float(dfx.subs(x, x_value))
 
