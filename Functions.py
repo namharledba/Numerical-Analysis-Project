@@ -95,3 +95,61 @@ def false_position(xl, xu, equ, expected_error):
         if error < expected_error: break
 
         i += 1
+
+def se_cant(xi, xi_1, equ, expected_error):
+
+    x = sp.symbols('x')
+    fx = sp.sympify(equ)
+
+    error = 100
+    i = 0
+    while error > expected_error:
+
+        xi_old = xi
+
+        fxi = float(fx.subs(x, xi))
+        fxi_1 = float(fx.subs(x, xi_1))
+
+        xi_new = xi - (fxi * (xi_1 - xi)) / (fxi_1 - fxi)
+
+        error = abs((xi_new - xi_old) / xi_new) * 100
+
+        print(f"iteration:{i}|{xi_1:.3f}|{fxi_1:.3f}|{xi:.3f}|{fxi:.3f}|{error:.3f}")
+
+        xi_1 = xi
+        xi = xi_new
+
+        i += 1
+    return xi
+
+
+def newton_method(initial, equ, expected_error):
+    x = sp.symbols('x')
+    fx = sp.sympify(equ)
+    dfx = sp.diff(fx, x)
+
+    x_value = float(initial)
+    error = 100
+    i = 0
+
+    while error >= expected_error:
+        fx_val = float(fx.subs(x, x_value))
+        dfx_val = float(dfx.subs(x, x_value))
+
+        xr = x_value - (fx_val / dfx_val)
+
+
+        if i == 0:
+            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = ____")
+        else:
+            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = {error:.6f}%")
+
+        error = abs((xr - x_value) / xr) * 100
+
+        if error <= expected_error:
+            break
+
+        x_value = xr
+        i += 1
+
+    print(f"\nRoot = {xr:.6f}")
