@@ -153,5 +153,4 @@ def se_cant(xi, xi_1, equ, expected_error):
             xi_1 = xi
             xi = xi_new
             error = abs((xi_new - xi_old) / xi_new) * 100
-
             i += 1
