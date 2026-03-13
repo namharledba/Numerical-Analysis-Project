@@ -27,7 +27,7 @@ def simple_fixed_point(frist_initial, equ, expected_error):
     error = 100
     i = 0
 
-    while error > expected_error :
+    while error != expected_error :
         gx = gx_expr.subs(x, x_value)
         if i == 0:
             print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = ____")
@@ -48,7 +48,7 @@ def bi_section(xl, xu, equ, expected_error):
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
 
-    while error > expected_error :
+    while error != expected_error :
         if not_valid(fxu, fxl):
             print("The function has no solution...")
             break
@@ -76,7 +76,7 @@ def false_position(xl, xu, equ, expected_error):
     xr = 0.00
     error = 100
     i = 0
-    while error > expected_error:
+    while error != expected_error:
         xr_old = xr
 
         fxl = fx.subs(x, xl)
@@ -99,3 +99,59 @@ def false_position(xl, xu, equ, expected_error):
             break
         if error <= expected_error: break
         i += 1
+
+def newton_method(initial, equ, expected_error):
+    x = sp.symbols('x')
+    fx = sp.sympify(equ)
+    dfx = sp.diff(fx, x)
+
+    x_value = float(initial)
+    error = 100
+    i = 0
+
+    while error != expected_error:
+        fx_val = float(fx.subs(x, x_value))
+        dfx_val = float(dfx.subs(x, x_value))
+
+        xr = x_value - (fx_val / dfx_val)
+
+
+        if i == 0:
+            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = ____")
+        else:
+            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = {error:.6f}%")
+
+        if error <= expected_error:
+            break
+        error = abs((xr - x_value) / xr) * 100
+        x_value = xr
+        i += 1
+
+    print(f"\nRoot = {xr:.6f}")
+
+def se_cant(xi, xi_1, equ, expected_error):
+
+        x = sp.symbols('x')
+        fx = sp.sympify(equ)
+        error = 100
+        i = 0
+
+        while error != expected_error:
+            xi_old = xi
+
+            fxi = fx.subs(x, xi)
+            fxi_1 = fx.subs(x, xi_1)
+
+            xi_new = xi - (fxi * (xi_1 - xi)) / (fxi_1 - fxi)
+
+
+            print(f"iteration:{i}|{xi_1:.3f}|{fxi_1:.3f}|{xi:.3f}|{fxi:.3f}|{error:.3f}")
+
+            if error <= expected_error:
+                break
+
+            xi_1 = xi
+            xi = xi_new
+            error = abs((xi_new - xi_old) / xi_new) * 100
+
+            i += 1
