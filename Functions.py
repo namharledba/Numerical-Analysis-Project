@@ -6,7 +6,6 @@ db = sql.connect("Numerical_Analysis.db")
 cr = db.cursor()
 
 cr.execute("CREATE TABLE if not exists polynomials(xl DOUBLE, xu DOUBLE, equ TEXT, expected_error DOUBLE)")
-cr.execute("insert into polynomials values(?,?,?,?) ")
 
 
 def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
@@ -44,6 +43,11 @@ def simple_fixed_point(frist_initial, equ, expected_error):
 
 
 def bi_section(xl, xu, equ, expected_error):
+    input_tuple = (xl, xu, equ, expected_error)
+    cr.execute("insert into polynomials values(?,?,?,?) ",input_tuple)
+    cr.execute("select * from polynomials")
+    db.commit()
+    db.close()
     x = sp.symbols('x')
     fx = sp.sympify(equ)
     xr= 0.00
@@ -74,6 +78,11 @@ def bi_section(xl, xu, equ, expected_error):
 
 
 def false_position(xl, xu, equ, expected_error):
+    input_tuple = (xl, xu, equ, expected_error)
+    cr.execute("insert into polynomials values(?,?,?,?) ",input_tuple)
+    cr.execute("select * from polynomials")
+    db.commit()
+    db.close()
     x = sp.symbols('x')
     fx = sp.sympify(equ)
     xr = 0.00
