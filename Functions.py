@@ -1,16 +1,20 @@
 import sympy as sp
+import sqlite3 as sql
+
+
+db = sql.connect("Numerical_Analysis.db")
+cr = db.cursor()
+
+cr.execute("CREATE TABLE if not exists polynomials(xl DOUBLE, xu DOUBLE, equ TEXT, expected_error DOUBLE)")
+cr.execute("insert into polynomials values(?,?,?,?) ")
+
 
 def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
-    if i == 0 :
-        print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
-          f" f(xr) = {fxr:.3f} |error = {"____"}")
-    else :
-        print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
-              f" f(xr) = {fxr:.3f} |error = {error:.3f} ")
+    print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
+          f" f(xr) = {fxr:.3f} |error = {error:.3f} %")
 
 def not_valid(fxu, fxl):
         return fxu * fxl > 0
-
 
 def simple_fixed_point(frist_initial, equ, expected_error):
     x = sp.symbols('x')
@@ -32,7 +36,7 @@ def simple_fixed_point(frist_initial, equ, expected_error):
         if i == 0:
             print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = ____")
         else :
-            print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = {error:.3f}")
+            print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = {error:.3f} %")
         if error <= expected_error: break
         error = abs((gx - x_value) / gx) * 100
         x_value = gx
@@ -129,8 +133,6 @@ def newton_method(initial, equ, expected_error):
         x_value = xr
         i += 1
 
-    print(f"\nRoot = {xr:.6f}")
-
 def se_cant(xi, xi_1, equ, expected_error):
 
     x = sp.symbols('x')
@@ -157,34 +159,3 @@ def se_cant(xi, xi_1, equ, expected_error):
         i += 1
     return xi
 
-
-def newton_method(initial, equ, expected_error):
-    x = sp.symbols('x')
-    fx = sp.sympify(equ)
-    dfx = sp.diff(fx, x)
-
-    x_value = float(initial)
-    error = 100
-    i = 0
-
-    while error != expected_error:
-        fx_val = float(fx.subs(x, x_value))
-        dfx_val = float(dfx.subs(x, x_value))
-
-        xr = x_value - (fx_val / dfx_val)
-
-
-        if i == 0:
-            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = ____")
-        else:
-            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = {error:.6f}%")
-
-        error = abs((xr - x_value) / xr) * 100
-
-        if error <= expected_error:
-            break
-
-        x_value = xr
-        i += 1
-
-    print(f"\nRoot = {xr:.6f}")
