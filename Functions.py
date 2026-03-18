@@ -13,8 +13,8 @@ def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
     print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
           f" f(xr) = {fxr:.3f} |error = {error:.3f} %")
 
-def not_valid(fxu, fxl):
-        return fxu * fxl > 0
+def valid(fxu, fxl):
+        return fxu * fxl < 0
 
 def simple_fixed_point(frist_initial, equ, expected_error):
     x = sp.symbols('x')
@@ -47,13 +47,12 @@ def bi_section(xl, xu, equ, expected_error):
     x = sp.symbols('x')
     fx = sp.sympify(equ)
     xr= 0.00
-    error = 100
     i = 0
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
 
-    while error != expected_error :
-        if not_valid(fxu, fxl):
+    while valid(fxu,fxl) :
+        if not valid(fxu,fxl):
             print("The function has no solution...")
             break
         xr_old = xr
@@ -78,18 +77,16 @@ def false_position(xl, xu, equ, expected_error):
     x = sp.symbols('x')
     fx = sp.sympify(equ)
     xr = 0.00
-    error = 100
     i = 0
-    while error != expected_error:
-        xr_old = xr
+    fxl = fx.subs(x, xl)
+    fxu = fx.subs(x, xu)
 
-        fxl = fx.subs(x, xl)
-        fxu = fx.subs(x, xu)
-
-        if fxu * fxl > 0:
+    while valid(fxu,fxl) :
+        if not valid(fxu,fxl):
             print("The function has no solution...")
             break
 
+        xr_old = xr
         xr = xu - ((fxu * (xl - xu)) / (fxl - fxu))
         fxr = fx.subs(x, xr)
         error = abs((xr - xr_old) / xr) * 100
@@ -97,8 +94,10 @@ def false_position(xl, xu, equ, expected_error):
         display(i,xl,fxl,xu,fxu,xr,fxr,error)
         if fxr * fxl < 0:
             xu = xr
+            fxu = fx.subs(x, xu)
         elif fxr * fxl > 0:
             xl = xr
+            fxl = fx.subs(x, xl)
         else:
             break
         if error <= expected_error: break
