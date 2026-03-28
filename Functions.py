@@ -8,6 +8,7 @@ cr = db.cursor()
 cr.execute("CREATE TABLE if not exists polynomials(xl DOUBLE, xu DOUBLE, equ TEXT, expected_error DOUBLE)")
 cr.execute("CREATE TABLE if not exists polynomials2( frist_initial DOUBLE, equ TEXT, expected_error DOUBLE)")
 
+
 def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
     print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
           f" f(xr) = {fxr:.3f} |error = {error:.3f} %")
