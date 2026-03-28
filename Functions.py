@@ -6,6 +6,7 @@ db = sql.connect("Numerical_Analysis.db")
 cr = db.cursor()
 
 cr.execute("CREATE TABLE if not exists polynomials(xl DOUBLE, xu DOUBLE, equ TEXT, expected_error DOUBLE)")
+cr.execute("CREATE TABLE if not exists polynomials2( frist_initial DOUBLE, equ TEXT, expected_error DOUBLE)")
 
 
 def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
@@ -16,6 +17,11 @@ def valid(fxu, fxl):
         return fxu * fxl < 0
 
 def simple_fixed_point(frist_initial, equ, expected_error):
+    input_tuple = (frist_initial, equ, expected_error)
+    cr.execute("insert into polynomials2 values(?,?,?) ",input_tuple)
+    cr.execute("select * from polynomials2")
+    db.commit()
+    db.close()
     x = sp.symbols('x')
     fx = sp.sympify(equ)
     highest_power = sp.degree(fx)
@@ -165,5 +171,4 @@ def se_cant(xi, xi_1, equ, expected_error):
         xi = xi_new
 
         i += 1
-    return xi
 
