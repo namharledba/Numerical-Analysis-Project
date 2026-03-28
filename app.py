@@ -1,4 +1,4 @@
 from Functions import *
 import streamlit as st
 
-print(bi_section(0,1,"4*x**3-6*x**2+7*x-2.3",1))
+print(false_position(0,1,"-2+7*x-5*x**2+6*x**3",10))
