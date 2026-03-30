@@ -1,27 +1,23 @@
 import sympy as sp
 import sqlite3 as sql
-
+import numpy as np
+from numpy.matlib import zeros
 
 db = sql.connect("Numerical_Analysis.db")
 cr = db.cursor()
-
-cr.execute("CREATE TABLE if not exists polynomials(xl DOUBLE, xu DOUBLE, equ TEXT, expected_error DOUBLE)")
-cr.execute("CREATE TABLE if not exists polynomials2( frist_initial DOUBLE, equ TEXT, expected_error DOUBLE)")
-
 
 def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
     print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
           f" f(xr) = {fxr:.3f} |error = {error:.3f} %")
 
+
+
 def valid(fxu, fxl):
         return fxu * fxl < 0
 
+
+
 def simple_fixed_point(frist_initial, equ, expected_error):
-    input_tuple = (frist_initial, equ, expected_error)
-    cr.execute("insert into polynomials2 values(?,?,?) ",input_tuple)
-    cr.execute("select * from polynomials2")
-    db.commit()
-    db.close()
     x = sp.symbols('x')
     fx = sp.sympify(equ)
     highest_power = sp.degree(fx)
@@ -48,12 +44,8 @@ def simple_fixed_point(frist_initial, equ, expected_error):
         i += 1
 
 
+
 def bi_section(xl, xu, equ, expected_error):
-    input_tuple = (xl, xu, equ, expected_error)
-    cr.execute("insert into polynomials values(?,?,?,?) ",input_tuple)
-    cr.execute("select * from polynomials")
-    db.commit()
-    db.close()
     x = sp.symbols('x')
     fx = sp.sympify(equ)
     xr= 0.00
@@ -83,12 +75,8 @@ def bi_section(xl, xu, equ, expected_error):
         i+=1
 
 
+
 def false_position(xl, xu, equ, expected_error):
-    input_tuple = (xl, xu, equ, expected_error)
-    cr.execute("insert into polynomials values(?,?,?,?) ",input_tuple)
-    cr.execute("select * from polynomials")
-    db.commit()
-    db.close()
     x = sp.symbols('x')
     fx = sp.sympify(equ)
     xr = 0.00
@@ -118,34 +106,33 @@ def false_position(xl, xu, equ, expected_error):
         if error <= expected_error: break
         i += 1
 
+
+
 def newton_method(initial, equ, expected_error):
-    x = sp.symbols('x')
-    fx = sp.sympify(equ)
-    dfx = sp.diff(fx, x)
 
-    x_value = float(initial)
-    error = 100
-    i = 0
+    x       =  sp.symbols('x')
+    fx      =  sp.sympify(equ)
+    dfx     =  sp.diff(fx, x)
+    xi      =  round(initial,3)
+    error   =  100
+    i       =  0
 
-    while error != expected_error:
-        fx_val = float(fx.subs(x, x_value))
-        dfx_val = float(dfx.subs(x, x_value))
+    while True:
 
-        xr = x_value - (fx_val / dfx_val)
-
+        fx_val   = fx.subs( x , xi )
+        dfx_val  = dfx.subs( x , xi )
+        xi_plus1 = round(xi - ( fx_val / dfx_val ),3)
 
         if i == 0:
-            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = ____")
+            print(f"iteration :{i} | x = {xi} | f(x) = {round(fx_val,4)} | f'(x) = {round(dfx_val,3)} | error = ____")
         else:
-            print(f"iteration :{i} | x = {x_value:.6f} | f(x) = {fx_val:.6f} | f'(x) = {dfx_val:.6f} | error = {error:.6f}%")
+            print(f"iteration :{i} | x = {xi} | f(x) = {round(fx_val,4)} | f'(x) = {round(dfx_val,3)} | error = {error}%")
 
-        error = abs((xr - x_value) / xr) * 100
+        if error <= expected_error: break
 
-        if error <= expected_error:
-            break
-
-        x_value = xr
-        i += 1
+        error = round(abs((xi_plus1 - xi) / xi_plus1) * 100,3)
+        xi    = xi_plus1
+        i    += 1
 
 def se_cant(xi, xi_1, equ, expected_error):
 
@@ -169,6 +156,39 @@ def se_cant(xi, xi_1, equ, expected_error):
 
         xi_1 = xi
         xi = xi_new
-
         i += 1
 
+
+
+def gauss_elimination(ab):
+    temp_matrix = np.array(ab,float)
+    shape       = temp_matrix.shape
+    no_columns  = shape[1]
+    no_rows     = shape[0]
+    a = temp_matrix[:, :-1]
+    b = temp_matrix[:, -1]
+    x = zeros(no_rows)
+
+    for i in range(no_rows):
+            b[i] = ab[i][-1]
+
+    for i in range(no_rows):
+        for j in range(no_columns-1):
+            a[i][j] = ab[i][j]
+
+
+    for k in range(no_rows-1):
+        for i in range(k+1, no_rows):
+            if a[i][k] == 0: continue
+            factor = a[i][k] / a[k][k]
+            for j in range(k,no_columns-1):
+                a[i][j] = a[i][j] - (a[k][j] * factor)
+            b[i] = b[i] - (b[k] * factor)
+
+    x[no_rows-1] = b[no_rows-1] / a[no_rows-1][no_rows-1]
+
+    for i in range(no_rows - 1, -1, -1):
+        sum_x = 0
+        for j in range(i + 1, no_rows):
+                sum_x += a[i][j] * x[j]
+                x[i] = (b[i] - sum_x) / a[i][i]
