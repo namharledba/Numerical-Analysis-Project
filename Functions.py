@@ -1,6 +1,7 @@
 import sympy as sp
 import sqlite3 as sql
 import numpy as np
+from numpy.matlib import zeros
 
 db = sql.connect("Numerical_Analysis.db")
 cr = db.cursor()
@@ -166,6 +167,7 @@ def gauss_elimination(ab):
     no_rows     = shape[0]
     a = temp_matrix[:, :-1]
     b = temp_matrix[:, -1]
+    x = zeros(no_rows)
 
     for i in range(no_rows):
             b[i] = ab[i][-1]
@@ -182,3 +184,11 @@ def gauss_elimination(ab):
             for j in range(k,no_columns-1):
                 a[i][j] = a[i][j] - (a[k][j] * factor)
             b[i] = b[i] - (b[k] * factor)
+
+    x[no_rows-1] = b[no_rows-1] / a[no_rows-1][no_rows-1]
+
+    for i in range(no_rows - 1, -1, -1):
+        sum_x = 0
+        for j in range(i + 1, no_rows):
+                sum_x += a[i][j] * x[j]
+                x[i] = (b[i] - sum_x) / a[i][i]
