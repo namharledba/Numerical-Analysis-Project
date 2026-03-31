@@ -2,14 +2,16 @@ import sympy as sp
 import sqlite3 as sql
 import numpy as np
 from numpy.matlib import zeros
+import pandas as pd
+from sympy.parsing.sympy_parser import standard_transformations, implicit_multiplication_application
+
+def parse_function(equ):
+    equ = equ.replace("^", "**")
+    transformations = standard_transformations + (implicit_multiplication_application,)
+    return sp.parse_expr(equ, transformations=transformations)
 
 db = sql.connect("Numerical_Analysis.db")
 cr = db.cursor()
-
-def display (i,xl,fxl,xu,fxu,xr,fxr,error) :
-    print(f"iteration :{i} | xl = {xl:.3f} | f(xl) = {fxl:.3f} | xu = {xu:.3f}|f(xu) = {fxu:.3f} | xr = {xr:.3f} |"
-          f" f(xr) = {fxr:.3f} |error = {error:.3f} %")
-
 
 
 def valid(fxu, fxl):
@@ -19,7 +21,7 @@ def valid(fxu, fxl):
 
 def simple_fixed_point(frist_initial, equ, expected_error):
     x = sp.symbols('x')
-    fx = sp.sympify(equ)
+    fx = parse_function(equ)
     highest_power = sp.degree(fx)
     coeff_highest = fx.coeff(x ** highest_power)
 
@@ -47,22 +49,20 @@ def simple_fixed_point(frist_initial, equ, expected_error):
 
 def bi_section(xl, xu, equ, expected_error):
     x = sp.symbols('x')
-    fx = sp.sympify(equ)
+    fx = parse_function(equ)
     xr= 0.00
     i = 0
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
-
+    df = pd.DataFrame(columns=['Xl', 'Fxl', 'Xu', 'Fxu', 'Xr', 'Fxr', 'Error'])
     while valid(fxu,fxl) :
-        if not valid(fxu,fxl):
-            print("The function has no solution...")
-            break
         xr_old = xr
         xr = (xl + xu) / 2.0
         fxr = fx.subs(x, xr)
-
         error = abs((xr - xr_old) / xr) * 100
-        display(i,xl,fxl,xu,fxu,xr,fxr,error)
+        new_row_data = pd.DataFrame([{'Xl':round(xl,3),'Fxl':round(fxl,3) ,'Xu':round(xu,3),'Fxu':round(fxu,3),'Xr':round(xr,3),'Fxr':round(fxr,3),'Error':round(error,5)}])
+        df = pd.concat([df,new_row_data],ignore_index=True)
+
         if fxr * fxl < 0:
             xu = xr
             fxu = fx.subs(x, xu)
@@ -73,12 +73,12 @@ def bi_section(xl, xu, equ, expected_error):
             break
         if error <= expected_error: break
         i+=1
-
+    return df
 
 
 def false_position(xl, xu, equ, expected_error):
     x = sp.symbols('x')
-    fx = sp.sympify(equ)
+    fx = parse_function(equ)
     xr = 0.00
     i = 0
     fxl = fx.subs(x, xl)
@@ -94,7 +94,6 @@ def false_position(xl, xu, equ, expected_error):
         fxr = fx.subs(x, xr)
         error = abs((xr - xr_old) / xr) * 100
 
-        display(i,xl,fxl,xu,fxu,xr,fxr,error)
         if fxr * fxl < 0:
             xu = xr
             fxu = fx.subs(x, xu)
@@ -111,7 +110,7 @@ def false_position(xl, xu, equ, expected_error):
 def newton_method(initial, equ, expected_error):
 
     x       =  sp.symbols('x')
-    fx      =  sp.sympify(equ)
+    fx      =  parse_function(equ)
     dfx     =  sp.diff(fx, x)
     xi      =  round(initial,3)
     error   =  100
@@ -137,7 +136,7 @@ def newton_method(initial, equ, expected_error):
 def se_cant(xi, xi_1, equ, expected_error):
 
     x = sp.symbols('x')
-    fx = sp.sympify(equ)
+    fx = parse_function(equ)
 
     error = 100
     i = 0
