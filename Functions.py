@@ -191,3 +191,40 @@ def gauss_elimination(ab):
         for j in range(i + 1, no_rows):
                 sum_x += a[i][j] * x[j]
                 x[i] = (b[i] - sum_x) / a[i][i]
+
+def lu_decomposition(ab):
+   
+    temp_matrix = np.array(ab, float)
+    n = temp_matrix.shape[0]
+    A = temp_matrix[:, :-1]
+    b = temp_matrix[:, -1]
+    
+   
+    L = np.eye(n) 
+    U = np.zeros((n, n))
+    
+ 
+    for i in range(n):
+       
+        for k in range(i, n):
+            sum_lu = sum(L[i][j] * U[j][k] for j in range(i))
+            U[i][k] = A[i][k] - sum_lu
+            
+        
+        for k in range(i + 1, n):
+            sum_lu = sum(L[k][j] * U[j][i] for j in range(i))
+            L[k][i] = (A[k][i] - sum_lu) / U[i][i]
+
+   
+    y = np.zeros(n)
+    for i in range(n):
+        sum_ly = sum(L[i][j] * y[j] for j in range(i))
+        y[i] = b[i] - sum_ly
+        
+   
+    x = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        sum_ux = sum(U[i][j] * x[j] for j in range(i + 1, n))
+        x[i] = (y[i] - sum_ux) / U[i][i]
+        
+    return L, U, x
