@@ -13,15 +13,20 @@ def parse_function(equ):
 db = sql.connect("Numerical_Analysis.db")
 cr = db.cursor()
 
+def valid(xu, xl,equ):
+    x = sp.symbols('x')
+    fx = parse_function(equ)
+    fxu = fx.subs(x, xu)
+    fxl = fx.subs(x, xl)
+    return round(fxu,8) * round(fxl,8) < 0
 
-def valid(fxu, fxl):
-        return fxu * fxl < 0
-
+def valid_error(expected_error):
+    return 0 < expected_error < 100
 
 
 def simple_fixed_point(frist_initial, equ, expected_error):
     x = sp.symbols('x')
-    fx = parse_function(equ)
+    fx = sp.sympify(equ)
     highest_power = sp.degree(fx)
     coeff_highest = fx.coeff(x ** highest_power)
 
@@ -55,25 +60,34 @@ def bi_section(xl, xu, equ, expected_error):
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
     df = pd.DataFrame(columns=['Xl', 'Fxl', 'Xu', 'Fxu', 'Xr', 'Fxr', 'Error'])
-    while valid(fxu,fxl) :
+
+    while valid(xu,xl,equ) :
         xr_old = xr
         xr = (xl + xu) / 2.0
         fxr = fx.subs(x, xr)
+
         error = abs((xr - xr_old) / xr) * 100
-        new_row_data = pd.DataFrame([{'Xl':round(xl,3),'Fxl':round(fxl,3) ,'Xu':round(xu,3),'Fxu':round(fxu,3),'Xr':round(xr,3),'Fxr':round(fxr,3),'Error':round(error,5)}])
+        new_row_data = pd.DataFrame([{
+            'Xl':round(xl,3),'Fxl':round(fxl,5) ,'Xu':round(xu,3),'Fxu':round(fxu,5),
+            'Xr':round(xr,3),'Fxr':round(fxr,5),'Error':round(error,5)
+                 }])
         df = pd.concat([df,new_row_data],ignore_index=True)
 
         if fxr * fxl < 0:
-            xu = xr
-            fxu = fx.subs(x, xu)
+                xu = xr
+                fxu = fx.subs(x, xu)
         elif fxr * fxl > 0:
-            xl = xr
-            fxl = fx.subs(x, xl)
+                xl = xr
+                fxl = fx.subs(x, xl)
         else:
-            break
+                break
         if error <= expected_error: break
-        i+=1
-    return df
+        else: i+=1
+
+    if not valid(xu,xl,equ) :
+            return None
+    else:
+            return df
 
 
 def false_position(xl, xu, equ, expected_error):
@@ -83,16 +97,19 @@ def false_position(xl, xu, equ, expected_error):
     i = 0
     fxl = fx.subs(x, xl)
     fxu = fx.subs(x, xu)
+    df = pd.DataFrame(columns=['Xl', 'Fxl', 'Xu', 'Fxu', 'Xr', 'Fxr', 'Error'])\
 
-    while valid(fxu,fxl) :
-        if not valid(fxu,fxl):
-            print("The function has no solution...")
-            break
-
+    while valid(fxu,fxl,equ) :
         xr_old = xr
         xr = xu - ((fxu * (xl - xu)) / (fxl - fxu))
         fxr = fx.subs(x, xr)
         error = abs((xr - xr_old) / xr) * 100
+
+        new_row_data = pd.DataFrame([{
+            'Xl': round(xl, 3), 'Fxl': round(fxl, 5), 'Xu': round(xu, 3), 'Fxu': round(fxu, 5),
+            'Xr': round(xr, 3), 'Fxr': round(fxr, 5), 'Error': round(error, 5)
+        }])
+        df = pd.concat([df, new_row_data], ignore_index=True)
 
         if fxr * fxl < 0:
             xu = xr
@@ -104,13 +121,13 @@ def false_position(xl, xu, equ, expected_error):
             break
         if error <= expected_error: break
         i += 1
-
+    return df
 
 
 def newton_method(initial, equ, expected_error):
 
     x       =  sp.symbols('x')
-    fx      =  parse_function(equ)
+    fx      =  sp.sympify(equ)
     dfx     =  sp.diff(fx, x)
     xi      =  round(initial,3)
     error   =  100
@@ -136,7 +153,7 @@ def newton_method(initial, equ, expected_error):
 def se_cant(xi, xi_1, equ, expected_error):
 
     x = sp.symbols('x')
-    fx = parse_function(equ)
+    fx = sp.sympify(equ)
 
     error = 100
     i = 0
@@ -191,6 +208,7 @@ def gauss_elimination(ab):
         for j in range(i + 1, no_rows):
                 sum_x += a[i][j] * x[j]
                 x[i] = (b[i] - sum_x) / a[i][i]
+
 
 def lu_decomposition(ab):
    
