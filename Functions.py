@@ -97,7 +97,7 @@ def false_position(xl, xu, equ, expected_error):
     i = 0
     fxl = fx.subs(x, xl)
     fxu = fx.subs(x, xu)
-    df = pd.DataFrame(columns=['Xl', 'Fxl', 'Xu', 'Fxu', 'Xr', 'Fxr', 'Error'])\
+    df = pd.DataFrame(columns=['Xl', 'Fxl', 'Xu', 'Fxu', 'Xr', 'Fxr', 'Error'])
 
     while valid(fxu,fxl,equ) :
         xr_old = xr
