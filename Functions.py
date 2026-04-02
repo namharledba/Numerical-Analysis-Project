@@ -30,36 +30,44 @@ def valid_error(expected_error):
 
 def simple_fixed_point(frist_initial, equ, expected_error):
     x = sp.symbols('x')
-    fx = sp.sympify(equ)
+    fx = parse_function(equ)
     highest_power = sp.degree(fx)
-    coeff_highest = fx.coeff(x ** highest_power)
+    highest_coefficient = fx.coeff(x ** highest_power)
 
-    reset = fx - (coeff_highest * x ** highest_power)
-    if coeff_highest < 0:
-        gx_expr = (-reset / coeff_highest) ** (1 / highest_power)
+    reset = fx - (highest_coefficient * x ** highest_power)
+    if highest_coefficient < 0:
+        gx_expr = (-reset / highest_coefficient) ** (1 / highest_power)
     else:
-        gx_expr = (reset / coeff_highest) ** (1 / highest_power)
+        gx_expr = (reset / highest_coefficient) ** (1 / highest_power)
     x_value = float(frist_initial)
     error = 100
     i = 0
-
+    df = pd.DataFrame(columns=['X', 'gx', 'Error'])
     while error != expected_error:
         gx = gx_expr.subs(x, x_value)
+
         if i == 0:
-            print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = ____")
+            new_row_data = pd.DataFrame([{
+                'X': round(x, 3), 'gx': round(gx, 5), 'Error': "---"
+            }])
         else:
-            print(f"i = {i} | X = {x_value:.3f} | gx = {gx:.3f} | error = {error:.3f} %")
+            new_row_data = pd.DataFrame([{
+                'X': round(x, 3), 'gx': round(gx, 5), 'Error': round(error, 5)
+            }])
+
+        df = pd.concat([df, new_row_data], ignore_index=True)
         if error <= expected_error: break
         error = abs((gx - x_value) / gx) * 100
         x_value = gx
         i += 1
-
+    return df
 
 def bi_section(xl, xu, equ, expected_error):
     x = sp.symbols('x')
     fx = parse_function(equ)
     xr = 0.00
     i = 0
+    error = 100
     fxu = fx.subs(x, xu)
     fxl = fx.subs(x, xl)
     df = pd.DataFrame(columns=['Xl', 'Fxl', 'Xu', 'Fxu', 'Xr', 'Fxr', 'Error'])
@@ -69,13 +77,19 @@ def bi_section(xl, xu, equ, expected_error):
         xr = (xl + xu) / 2.0
         fxr = fx.subs(x, xr)
 
-        error = abs((xr - xr_old) / xr) * 100
-        new_row_data = pd.DataFrame([{
+        if i == 0 :
+
+            new_row_data = pd.DataFrame([{
+                'Xl': round(xl, 3), 'Fxl': round(fxl, 5), 'Xu': round(xu, 3), 'Fxu': round(fxu, 5),
+                'Xr': round(xr, 3), 'Fxr': round(fxr, 5), 'Error': "---"
+            }])
+        else:
+            new_row_data = pd.DataFrame([{
             'Xl': round(xl, 3), 'Fxl': round(fxl, 5), 'Xu': round(xu, 3), 'Fxu': round(fxu, 5),
             'Xr': round(xr, 3), 'Fxr': round(fxr, 5), 'Error': round(error, 5)
-        }])
+            }])
+            error = abs((xr - xr_old) / xr) * 100
         df = pd.concat([df, new_row_data], ignore_index=True)
-
         if fxr * fxl < 0:
             xu = xr
             fxu = fx.subs(x, xu)
@@ -86,8 +100,7 @@ def bi_section(xl, xu, equ, expected_error):
             break
         if error <= expected_error:
             break
-        else:
-            i += 1
+        i += 1
 
     if not valid(xu, xl, equ):
         return None
@@ -100,6 +113,7 @@ def false_position(xl, xu, equ, expected_error):
     fx = parse_function(equ)
     xr = 0.00
     i = 0
+    error = 100
     fxl = fx.subs(x, xl)
     fxu = fx.subs(x, xu)
     df = pd.DataFrame(columns=['Xl', 'Fxl', 'Xu', 'Fxu', 'Xr', 'Fxr', 'Error'])
@@ -108,12 +122,17 @@ def false_position(xl, xu, equ, expected_error):
         xr_old = xr
         xr = xu - ((fxu * (xl - xu)) / (fxl - fxu))
         fxr = fx.subs(x, xr)
-        error = abs((xr - xr_old) / xr) * 100
-
-        new_row_data = pd.DataFrame([{
-                    'Xl': round(xl, 3), 'Fxl': round(fxl, 5), 'Xu': round(xu, 3), 'Fxu': round(fxu, 5),
-                    'Xr': round(xr, 3), 'Fxr': round(fxr, 5), 'Error': round(error, 5)
-                }])
+        if i == 0 :
+            new_row_data = pd.DataFrame([{
+                'Xl': round(xl, 3), 'Fxl': round(fxl, 5), 'Xu': round(xu, 3), 'Fxu': round(fxu, 5),
+                'Xr': round(xr, 3), 'Fxr': round(fxr, 5), 'Error': "---"
+            }])
+        else:
+            new_row_data = pd.DataFrame([{
+            'Xl': round(xl, 3), 'Fxl': round(fxl, 5), 'Xu': round(xu, 3), 'Fxu': round(fxu, 5),
+            'Xr': round(xr, 3), 'Fxr': round(fxr, 5), 'Error': round(error, 5)
+            }])
+            error = abs((xr - xr_old) / xr) * 100
         df = pd.concat([df, new_row_data], ignore_index=True)
 
         if fxr * fxl < 0:
@@ -131,12 +150,12 @@ def false_position(xl, xu, equ, expected_error):
 
 def newton_method(initial, equ, expected_error):
     x = sp.symbols('x')
-    fx = sp.sympify(equ)
+    fx = parse_function(equ)
     dfx = sp.diff(fx, x)
     xi = round(initial, 3)
     error = 100
     i = 0
-
+    df = pd.DataFrame(columns=['X', 'f(x)', "f'(x)",'Error'])
     while True:
 
         fx_val = fx.subs(x, xi)
@@ -144,21 +163,25 @@ def newton_method(initial, equ, expected_error):
         xi_plus1 = round(xi - (fx_val / dfx_val), 3)
 
         if i == 0:
-            print(f"iteration :{i} | x = {xi} | f(x) = {round(fx_val, 4)} | f'(x) = {round(dfx_val, 3)} | error = ____")
+            new_row_data = pd.DataFrame([{
+                'X' : xi, 'f(x)' : fx_val, "f'(x)":dfx_val, 'Error':"---"
+            }])
         else:
-            print(
-                f"iteration :{i} | x = {xi} | f(x) = {round(fx_val, 4)} | f'(x) = {round(dfx_val, 3)} | error = {error}%")
+            new_row_data = pd.DataFrame([{
+                'X': xi, 'f(x)': fx_val, "f'(x)": dfx_val, 'Error': error
+            }])
+        df = pd.concat([df, new_row_data], ignore_index=True)
 
         if error <= expected_error: break
 
         error = round(abs((xi_plus1 - xi) / xi_plus1) * 100, 3)
         xi = xi_plus1
         i += 1
-
+    return df
 
 def se_cant(xi, xi_1, equ, expected_error):
     x = sp.symbols('x')
-    fx = sp.sympify(equ)
+    fx = parse_function(equ)
 
     error = 100
     i = 0
@@ -215,30 +238,30 @@ def gauss_elimination(ab):
 def lu_decomposition(ab):
     temp_matrix = np.array(ab, float)
     n = temp_matrix.shape[0]
-    A = temp_matrix[:, :-1]
+    a = temp_matrix[:, :-1]
     b = temp_matrix[:, -1]
 
-    L = np.eye(n)
-    U = np.zeros((n, n))
+    l = np.eye(n)
+    u = np.zeros((n, n))
 
     for i in range(n):
 
         for k in range(i, n):
-            sum_lu = sum(L[i][j] * U[j][k] for j in range(i))
-            U[i][k] = A[i][k] - sum_lu
+            sum_lu = sum(l[i][j] * u[j][k] for j in range(i))
+            u[i][k] = a[i][k] - sum_lu
 
         for k in range(i + 1, n):
-            sum_lu = sum(L[k][j] * U[j][i] for j in range(i))
-            L[k][i] = (A[k][i] - sum_lu) / U[i][i]
+            sum_lu = sum(l[k][j] * u[j][i] for j in range(i))
+            l[k][i] = (a[k][i] - sum_lu) / u[i][i]
 
     y = np.zeros(n)
     for i in range(n):
-        sum_ly = sum(L[i][j] * y[j] for j in range(i))
+        sum_ly = sum(l[i][j] * y[j] for j in range(i))
         y[i] = b[i] - sum_ly
 
     x = np.zeros(n)
     for i in range(n - 1, -1, -1):
-        sum_ux = sum(U[i][j] * x[j] for j in range(i + 1, n))
-        x[i] = (y[i] - sum_ux) / U[i][i]
+        sum_ux = sum(u[i][j] * x[j] for j in range(i + 1, n))
+        x[i] = (y[i] - sum_ux) / u[i][i]
 
-    return L, U, x
+    return l, u, x
