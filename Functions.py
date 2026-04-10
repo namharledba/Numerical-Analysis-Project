@@ -225,7 +225,6 @@ def gauss_elimination(ab):
             b[i] = b[i] - (b[k] * factor)
 
     x[no_rows - 1] = b[no_rows - 1] / a[no_rows - 1][no_rows - 1]
-
     for i in range(no_rows - 1, -1, -1):
         sum_x = 0
         for j in range(i + 1, no_rows):
