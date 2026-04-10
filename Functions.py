@@ -231,7 +231,6 @@ def gauss_elimination(ab):
             sum_x += a[i][j] * x[j]
             x[i] = (b[i] - sum_x) / a[i][i]
 
-
 def lu_decomposition(ab):
     temp_matrix = np.array(ab, float)
     n = temp_matrix.shape[0]
