@@ -1,6 +1,5 @@
 import streamlit as s
 
-import streamlit as st
 st.header("Polynomials")
 tab1, tab2, tab3, tab4, tab5 = st.tabs(
     ["Bisection", "False position", "Simple Fixed point", "Secant",
