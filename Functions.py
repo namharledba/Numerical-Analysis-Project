@@ -62,7 +62,7 @@ def simple_fixed_point(frist_initial, equ, expected_error):
         i += 1
     return df
 
-def bi_section(xl, xu, equ, expected_error, iter = 50):
+def bi_section(xl, xu, equ, expected_error):
     x = sp.symbols('x')
     fx = parse_function(equ)
     xr = 0.00
@@ -73,7 +73,7 @@ def bi_section(xl, xu, equ, expected_error, iter = 50):
     df = pd.DataFrame(columns=['Xl', 'Fxl', 'Xu', 'Fxu', 'Xr', 'Fxr', 'Error'])
 
     while valid(xu, xl, equ):
-        if (not valid(xu, xl, equ)):
+        if not valid(xu, xl, equ):
             return 1
         xr_old = xr
         xr = (xl + xu) / 2.0
@@ -100,7 +100,7 @@ def bi_section(xl, xu, equ, expected_error, iter = 50):
             fxl = fx.subs(x, xl)
         else:
             break
-        if error <= expected_error or i >= iter:
+        if error <= expected_error :
             break
         i += 1
     return df
