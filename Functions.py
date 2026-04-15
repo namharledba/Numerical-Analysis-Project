@@ -60,7 +60,7 @@ def simple_fixed_point(frist_initial, equ, expected_error, max_iterations):
     error = 100
 
     df = pd.DataFrame(columns=['X', 'gx', 'Error'])
-    while error != expected_error:
+    while True:
         
         gx = gx_expr.subs(x, xi)
 
