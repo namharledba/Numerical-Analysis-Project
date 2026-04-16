@@ -41,6 +41,19 @@ def set_max_iterations_(max_iterations):
         return max_iterations
 
 
+def validate_function(equ):
+    try:
+        expr = parse_function(equ)
+        x = sp.symbols('x')
+        
+        free_symbols = expr.free_symbols
+        if free_symbols - {x}:
+            return False, f"Unknown variables: {free_symbols - {x}}"
+        
+        expr.subs(x, 1.0)
+        return True, None
+    except Exception as e:
+        return False, str(e)
 
 def simple_fixed_point(frist_initial, equ, expected_error, max_iterations):
     
@@ -82,7 +95,9 @@ def simple_fixed_point(frist_initial, equ, expected_error, max_iterations):
         xi = gx
         iterations -= 1
     if df.empty: return None
-    else: return df
+    else: 
+        df = df.apply(pd.to_numeric, errors='ignore') 
+        return df
 
 
 def bi_section(xl, xu, equ, expected_error, max_iterations):
@@ -104,13 +119,13 @@ def bi_section(xl, xu, equ, expected_error, max_iterations):
 
         if iterations == set_max_iterations_(max_iterations) :
             new_row_data = pd.DataFrame([{
-                'xl': xl, 'f(xl)': fxl, 'xu': xu, 'f(xu)': fxu,
-                'xr': xr, 'f(xr)': fxr, 'Error': "---"
+                'xl': float(xl), 'f(xl)': float(fxl), 'xu': float(xu), 'f(xu)': float(fxu),
+                'xr': float(xr), 'f(xr)': float(fxr), 'Error': "---"
             }])
         else:
             new_row_data = pd.DataFrame([{
-            'xl': xl, 'f(xl)': fxl, 'xu': xu, 'f(xu)': fxu,
-            'xr': xr, 'f(xr)': fxr, 'Error': error
+            'xl': float(xl), 'f(xl)': float(fxl), 'xu': float(xu), 'f(xu)': float(fxu),
+            'xr': float(xr), 'f(xr)': float(fxr), 'Error': float(error)
             }])
 
         df = pd.concat([df, new_row_data], ignore_index=True)
@@ -149,13 +164,13 @@ def false_position(xl, xu, equ, expected_error,max_iterations):
 
         if iterations == set_max_iterations_(max_iterations) :
             new_row_data = pd.DataFrame([{
-                'xl': xl, 'f(xl)': fxl, 'xu': xu, 'f(xu)': fxu,
-                'xr': xr, 'f(xr)': fxr, 'Error': "---"
+                'xl': float(xl), 'f(xl)': float(fxl), 'xu': float(xu), 'f(xu)': float(fxu),
+                'xr': float(xr), 'f(xr)': float(fxr), 'Error': "---"
             }])
         else:
             new_row_data = pd.DataFrame([{
-            'xl': xl, 'f(xl)': fxl, 'xu': xu, 'f(xu)': fxu,
-            'xr': xr, 'f(xr)': fxr, 'Error': error
+            'xl': float(xl), 'f(xl)': float(fxl), 'xu': float(xu), 'f(xu)': float(fxu),
+            'xr': float(xr), 'f(xr)': float(fxr), 'Error': float(error)
             }])
 
         df = pd.concat([df, new_row_data], ignore_index=True)
@@ -194,11 +209,11 @@ def newton_method(initial, equ, expected_error,max_iterations):
 
         if iterations == set_max_iterations_(max_iterations):
             new_row_data = pd.DataFrame([{
-                'X' : xi, 'f(x)' : fx_val, "f'(x)":dfx_val, 'Error':"---"
+                'X' : float(xi), 'f(x)' : float(fx_val), "f'(x)":float(dfx_val), 'Error':"---"
             }])
         else:
             new_row_data = pd.DataFrame([{
-                'X': xi, 'f(x)': fx_val, "f'(x)": dfx_val, 'Error': error
+                'X': float(xi), 'f(x)': float(fx_val), "f'(x)": float(dfx_val), 'Error': float(error)
             }])
         df = pd.concat([df, new_row_data], ignore_index=True)
 
@@ -227,11 +242,11 @@ def se_cant(xi_1, x0, equ, expected_error,max_iterations):
         error = abs((x0 - xi_1) / x0) * 100
         if iterations == set_max_iterations_(max_iterations):
             new_row_data = pd.DataFrame([{
-                'xi-1' : xi_1, 'f(xi-1)' : fxi_1, 'xi' : x0, 'f(xi)' : fx0, 'Error':"---"
+                'xi-1' : float(xi_1), 'f(xi-1)' : float(fxi_1), 'xi' : float(x0), 'f(xi)' : float(fx0), 'Error':"---"
             }])
         else:
             new_row_data = pd.DataFrame([{
-                'xi-1': xi_1, 'f(xi-1)': fxi_1, 'xi': x0, 'f(xi)': fx0, 'Error': error
+                'xi-1': float(xi_1), 'f(xi-1)': float(fxi_1), 'xi': float(x0), 'f(xi)': float(fx0), 'Error': float(error)
             }])
         df = pd.concat([df, new_row_data], ignore_index=True)
         xi_1 = x0
