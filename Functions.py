@@ -55,7 +55,7 @@ def validate_function(equ):
     except Exception as e:
         return False, str(e)
 
-def simple_fixed_point(frist_initial, equ, expected_error, max_iterations):
+def simple_fixed_point(initial, equ, expected_error, max_iterations):
     
     x = sp.symbols('x')
     fx = parse_function(equ)
@@ -69,7 +69,7 @@ def simple_fixed_point(frist_initial, equ, expected_error, max_iterations):
     else:
         gx_expr = (reset / highest_coefficient) ** (1 / highest_power)
     
-    xi = float(frist_initial)
+    xi = float(initial)
     error = 100
 
     df = pd.DataFrame(columns=['X', 'gx', 'Error'])
@@ -260,38 +260,25 @@ def se_cant(xi_1, x0, equ, expected_error,max_iterations):
 
 
 def gauss_elimination(ab):
-    temp_matrix = np.array(ab, float)
-    shape = temp_matrix.shape
-    no_columns = shape[1]
-    no_rows = shape[0]
+    temp_matrix = np.array(ab,float)
+    n = temp_matrix.shape[0]
     a = temp_matrix[:, :-1]
     b = temp_matrix[:, -1]
-    x = zeros(no_rows)
 
-    for i in range(no_rows):
-        b[i] = ab[i][-1]
+    for i in range(n):
+        for j in range(i + 1, n):
+            factor = a[j][i] / a[i][i]
+            a[j] = a[j] - factor * a[i]
+            b[j] = b[j] - factor * b[i]
 
-    for i in range(no_rows):
-        for j in range(no_columns - 1):
-            a[i][j] = ab[i][j]
+    x = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        x[i] = (b[i] - np.dot(a[i][i + 1:], x[i + 1:])) / a[i][i]
 
-    for k in range(no_rows - 1):
-        for i in range(k + 1, no_rows):
-            if a[i][k] == 0: continue
-            factor = a[i][k] / a[k][k]
-            for j in range(k, no_columns - 1):
-                a[i][j] = a[i][j] - (a[k][j] * factor)
-            b[i] = b[i] - (b[k] * factor)
-
-    x[no_rows - 1] = b[no_rows - 1] / a[no_rows - 1][no_rows - 1]
-    for i in range(no_rows - 1, -1, -1):
-        sum_x = 0
-        for j in range(i + 1, no_rows):
-            sum_x += a[i][j] * x[j]
-            x[i] = (b[i] - sum_x) / a[i][i]
+    return x
 
 def lu_decomposition(ab):
-    temp_matrix = np.array(ab, float)
+    temp_matrix = np.array(ab,float)
     n = temp_matrix.shape[0]
     a = temp_matrix[:, :-1]
     b = temp_matrix[:, -1]
@@ -319,4 +306,4 @@ def lu_decomposition(ab):
         sum_ux = sum(u[i][j] * x[j] for j in range(i + 1, n))
         x[i] = (y[i] - sum_ux) / u[i][i]
 
-    return l, u, x
+    return x
