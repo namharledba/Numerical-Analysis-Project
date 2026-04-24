@@ -36,4 +36,18 @@ with tab3:
     st.header("Cramer's Rule")
 
 with tab4:
-    st.header("Gauss-Jordan method")
+    st.header("Gauss-Jordan method")    
+    with st.form("Gauss jordan elimination"):
+        st.header("Gauss jordan elimination")
+        st.write("Enter the augmented matrix (A|b) row by row, separating values with spaces:")
+        
+       
+        matrix_a_text = st.text_area("Augmented Matrix (A)", height=200)
+        matrix_b_text= st.text_area("Augmented Matrix (b)", height=200)
+        submit_button = st.form_submit_button("Solve")
+
+        if submit_button:
+                matrix = [list(map(float, row.split())) for row in matrix_input.strip().split('\n')]
+                solution = Gauss_jordan (matrix_a_text,matrix_b_text)
+                for i in range(len(solution)):
+                    st.write(f"x{i+1} = {solution[i]}")
