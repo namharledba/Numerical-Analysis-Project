@@ -76,6 +76,7 @@ def simple_fixed_point(initial, equ, expected_error, max_iterations):
     while True:
         
         gx = gx_expr.subs(x, xi)
+        gx = float(abs(gx.evalf())) 
 
         if iterations == set_max_iterations_(max_iterations) :
             new_row_data = pd.DataFrame([{
@@ -90,7 +91,7 @@ def simple_fixed_point(initial, equ, expected_error, max_iterations):
         
         if error <= expected_error or iterations == 0:
             break
-        
+
         error = abs((gx - xi) / gx) * 100
         xi = gx
         iterations -= 1
@@ -306,4 +307,40 @@ def lu_decomposition(ab):
         sum_ux = sum(u[i][j] * x[j] for j in range(i + 1, n))
         x[i] = (y[i] - sum_ux) / u[i][i]
 
+    return l, u, x
+
+
+def gauss_jordan(A, b):
+    A, b = np.array(A, dtype=float), np.array(b, dtype=float)
+    n = len(A)
+    aug = np.hstack([A.reshape(n, -1), b.reshape(n, 1)])
+    
+    for i in range(n):
+        max_row = i + np.argmax(np.abs(aug[i:, i]))
+        aug[[i, max_row]] = aug[[max_row, i]]
+        
+        if abs(aug[i, i]) < 1e-10:
+            return None
+        
+        aug[i] /= aug[i, i]
+        for k in range(n):
+            if k != i:
+                aug[k] -= aug[k, i] * aug[i]
+    
+    return aug[:, -1]
+
+def cramer_rule(A, b):
+    A, b = np.array(A, dtype=float), np.array(b, dtype=float)
+    n = len(A)
+    det_A = np.linalg.det(A)
+    
+    if abs(det_A) < 1e-10:
+        return None
+    
+    x = np.zeros(n)
+    for i in range(n):
+        Ai = A.copy()
+        Ai[:, i] = b
+        x[i] = np.linalg.det(Ai) / det_A
+    
     return x
