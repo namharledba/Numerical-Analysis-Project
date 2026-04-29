@@ -307,11 +307,12 @@ def lu_decomposition(ab):
         sum_ux = sum(u[i][j] * x[j] for j in range(i + 1, n))
         x[i] = (y[i] - sum_ux) / u[i][i]
 
-    return l, u, x
+    return x
 
 
 def gauss_jordan(A, b):
-    A, b = np.array(A, dtype=float), np.array(b, dtype=float)
+    A = np.array([list(map(float, row.split())) for row in A.splitlines()])
+    b = np.array([list(map(float, row.split())) for row in b.splitlines()])
     n = len(A)
     aug = np.hstack([A.reshape(n, -1), b.reshape(n, 1)])
     
@@ -329,18 +330,23 @@ def gauss_jordan(A, b):
     
     return aug[:, -1]
 
+
 def cramer_rule(A, b):
-    A, b = np.array(A, dtype=float), np.array(b, dtype=float)
+    A = np.array([list(map(float, row.split())) for row in A.strip().splitlines()])
+    b = np.array([float(row.strip()) for row in b.strip().splitlines()])
+
     n = len(A)
+
     det_A = np.linalg.det(A)
-    
+
     if abs(det_A) < 1e-10:
         return None
-    
+
     x = np.zeros(n)
+
     for i in range(n):
         Ai = A.copy()
         Ai[:, i] = b
         x[i] = np.linalg.det(Ai) / det_A
-    
+
     return x
