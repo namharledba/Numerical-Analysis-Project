@@ -16,7 +16,7 @@ with tab1:
                 matrix = [list(map(float, row.split())) for row in matrix_input.strip().split('\n')]
                 solution = gauss_elimination(matrix)
                 for i in range(len(solution)):
-                    st.write(f"x{i+1} = {solution[i]}")
+                    st.write(f"x{i+1} = {round(solution[i], 1)}")
 
 with tab2:
     
@@ -30,10 +30,9 @@ with tab2:
                 matrix = [list(map(float, row.split())) for row in matrix_input.strip().split('\n')]
                 solution = lu_decomposition(matrix)
                 for i in range(len(solution)):
-                    st.write(f"x{i+1} = {solution[i]}")
+                    st.write(f"x{i+1} = {round(solution[i], 1)}")
 
 with tab3:
-    st.header("Cramer's Rule")
     with st.form("Cramer's Rule"):
         st.header("Cramer's Rule")
         st.write("Enter the augmented matrix (A|b) row by row, separating values with spaces:")
@@ -46,9 +45,8 @@ with tab3:
                 matrix = [list(map(float, row.split())) for row in matrix_input.strip().split('\n')]
                 solution = cramer_rule(matrix_a_text,matrix_b_text)
                 for i in range(len(solution)):
-                    st.write(f"x{i+1} = {solution[i]}")
+                    st.write(f"x{i+1} = {round(solution[i], 1)}")
 with tab4:
-    st.header("Gauss-Jordan method")    
     with st.form("Gauss jordan elimination"):
         st.header("Gauss jordan elimination")
         st.write("Enter the augmented matrix (A|b) row by row, separating values with spaces:")
@@ -62,4 +60,4 @@ with tab4:
                 matrix = [list(map(float, row.split())) for row in matrix_input.strip().split('\n')]
                 solution = gauss_jordan(matrix_a_text,matrix_b_text)
                 for i in range(len(solution)):
-                    st.write(f"x{i+1} = {solution[i]}")
+                    st.write(f"x{i+1} = {round(solution[i], 1)}")
