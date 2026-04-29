@@ -90,9 +90,18 @@ with main_tab2:
             out_p1, out_p2 = st.columns(2)
             with out_p1:
                 st.success(f"{p_m1} Iterations")
-                st.dataframe(df1)
+                df_display = df1.copy()
+                df_display['Error'] = pd.to_numeric(df_display['Error'], errors='coerce')
+                df_display = df_display.round(3)
+                df_display['Error'] = df_display['Error'].fillna('---')
+                st.write(df_display)
+
             with out_p2:
                 st.success(f"{p_m2} Iterations")
-                st.dataframe(df2)
+                df_display = df2.copy()
+                df_display['Error'] = pd.to_numeric(df_display['Error'], errors='coerce')
+                df_display = df_display.round(3)
+                df_display['Error'] = df_display['Error'].fillna('---')
+                st.write(df_display)
         except Exception as e:
             st.error(f"Polynomial Error: {e}")
