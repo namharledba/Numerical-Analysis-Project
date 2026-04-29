@@ -68,6 +68,15 @@ with tab1 :
             else:
                     st.info("All rows displayed.")
 
+    if st.button("Round", key="bisection_round"):
+        st.write("Rounded values:")
+        df_display = df.copy()
+        df_display['Error'] = pd.to_numeric(df_display['Error'], errors='coerce')
+        df_display = df_display.round(3)
+        df_display['Error'] = df_display['Error'].fillna('---')
+
+        st.write(df_display)
+
 
 with tab2 :
     
@@ -134,6 +143,15 @@ with tab2 :
             else:
                     st.info("All rows displayed.")
 
+    if st.button("Round", key="false_position_round"):
+        st.write("Rounded values:")
+        df_display = df.copy()
+        df_display['Error'] = pd.to_numeric(df_display['Error'], errors='coerce')
+        df_display = df_display.round(3)
+        df_display['Error'] = df_display['Error'].fillna('---')
+
+        st.write(df_display)
+
 
 with tab3 :
 
@@ -193,6 +211,15 @@ with tab3 :
             else:
                     st.info("All rows displayed.")
 
+    if st.button("Round", key="simple_fixed_point_round"):
+        st.write("Rounded values:")
+        df_display = df.copy()
+        df_display['Error'] = pd.to_numeric(df_display['Error'], errors='coerce')
+        df_display = df_display.round(3)
+        df_display['Error'] = df_display['Error'].fillna('---')
+
+        st.write(df_display)
+
 
 with tab4 :
 
@@ -251,6 +278,15 @@ with tab4 :
             else:
                     st.info("All rows displayed.")
 
+    if st.button("Round", key="newton_round"):
+        st.write("Rounded values:")
+        df_display = df.copy()
+        df_display['Error'] = pd.to_numeric(df_display['Error'], errors='coerce')
+        df_display = df_display.round(3)
+        df_display['Error'] = df_display['Error'].fillna('---')
+
+        st.write(df_display)
+
 
 with tab5 :
 
@@ -290,7 +326,7 @@ with tab5 :
                     st.success("result:")
                     st.session_state["secant_df"] = result
                     st.session_state["secant_row_index"] = 0
-    
+
     if "secant_df" in st.session_state:
             df = st.session_state["secant_df"]
             row_index = st.session_state.get("secant_row_index", 0)
@@ -309,3 +345,12 @@ with tab5 :
                             st.rerun()
             else:
                     st.info("All rows displayed.")
+
+    if st.button("Round",key= "secant_round"):
+        st.write("Rounded values:")
+        df_display = df.copy()
+        df_display['Error'] = pd.to_numeric(df_display['Error'], errors='coerce')
+        df_display = df_display.round(3)
+        df_display['Error'] = df_display['Error'].fillna('---')
+
+        st.write(df_display)
