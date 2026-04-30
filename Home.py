@@ -5,7 +5,7 @@ url = "https://www.mti.edu.eg/"
 st.title("Numerical Analyst")
 st.write("a Mini project to solve linear algebraic equations and finding roots for polynomials.")
 st.markdown("Built by CS & AI Students at [MTI university](%s)." % url)
-
+st.header("Polynomials:")
 st.subheader("Bisection method:")
 st.markdown(
                 "<small>The bisection method, which is alternatively called <u>binary chopping</u>, <u>interval halving</u>, or "
@@ -52,3 +52,50 @@ st.write("<small>A potential problem in implementing the Newton-Raphson" \
     "certain functions whose derivatives may be extremely difficult or" \
     "inconvenient to evaluate. For these cases, the derivative can be" \
     "approximated by a backward finite divided difference.</small>", unsafe_allow_html=True)
+st.header("Linear algebraic equations:")
+st.subheader("Gauss elimination:")
+st.markdown("<>The elimination of unknowns was used to solve a pair of" \
+"simultaneous equations. The procedure consisted of two steps:1. The equations were manipulated to eliminate one of the" \
+"unknowns from the equations. The result of this elimination" \
+"step was that we had one equation with one unknown." \
+"2. Consequently, this equation could be solved directly and the" \
+"result back-substituted into one of the original equations to" \
+"solve for the remaining unknown.This basic approach can be extended to large sets of equations by" \
+"developing a systematic scheme or algorithm to eliminate unknownsand to back-substitute." \
+" Gauss elimination is the most basic of these" \
+"schemes.</small>",unsafe_allow_html=True)
+st.subheader("LU decomposition:")
+st.markdown("<small>\
+            Gauss elimination is designed to solve systems of linear algebraic" \
+            "equations,[𝐴]{𝑋} = {𝐵} (2.8)Although it certainly represents a sound way to solve such systems," \
+            "it becomes inefficient when solving equations with the same" \
+            "coefficients [A], but with different right-hand-side constants (theb’s)." \
+            "Recall that Gauss elimination involves two steps: forward" \
+            "elimination and back substitution. Of these, the forward-elimination" \
+            "step comprises the bulk of the computational effort. This i" \
+            "particularly true for large systems of equations." \
+            "LU decomposition methods separate the time-consuming" \
+            "elimination of the matrix [A] from the manipulations of the right-" \
+            "hand side {B}. Thus, once [A] has been “decomposed,” multiple" \
+            "right-hand-side vectors can be evaluated in an efficient manner." \
+            "Interestingly, Gauss elimination itself can be expressed as an LU" \
+            "decomposition. Before showing how this can be done, let us first" \
+            "provide a mathematical overview of the decomposition strategy.</small>", unsafe_allow_html=True)
+st.subheader("Cramer's Rule:")
+st.markdown("<small>Cramer’s rule is another solution technique that is best suited to" 
+            "small numbers of equations. Before describing this method, we will"
+            "briefly introduce the concept of the determinant, which is used to"
+            "implement Cramer’s rule. In addition, the determinant has relevance"
+            "to the evaluation of the ill-conditioning of a matrix.</small>", unsafe_allow_html=True)
+st.subheader("Gauss-Jordan method:")
+st.markdown("<small>Gauss-Jordan elimination is a modification of Gauss elimination that" \
+    "eliminates the need for back substitution. In Gauss elimination, the" \
+    "forward-elimination step transforms the original system of equations" \
+    "into an upper triangular form. The back-substitution step then" \
+    "solves for the unknowns starting with the last equation and working" \
+    "backward to the first. In contrast, Gauss-Jordan elimination" \
+    "transforms the original system of equations into a diagonal form, so" \
+    "that the solution can be read directly from the resulting equations." \
+    "The Gauss-Jordan method is more computationally intensive than Gauss" \
+    "elimination, but it is more straightforward to implement and can be" \
+    "more efficient for small systems of equations.</small>", unsafe_allow_html=True)
